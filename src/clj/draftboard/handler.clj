@@ -8,6 +8,7 @@
 
 (defroutes routes
   (GET "/" [] (render-file "templates/index.html" {:dev (env :dev?)}))
+  (GET "/dashboard" [] (render-file "templates/draftboard.html" {:dev (env :dev?)}))
   (resources "/")
   (not-found "Not Found"))
 
