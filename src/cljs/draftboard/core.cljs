@@ -4,29 +4,37 @@
               [secretary.core :as secretary :include-macros true]
               [goog.events :as events]
               [goog.history.EventType :as EventType]
-              [cljsjs.react :as react])
+              [cljsjs.react :as react]
+              [draftboard.pages.welcome :refer [welcome-page]]
+              [draftboard.pages.draftboard :refer [draftboard-page]]
+              [draftboard.pages.create-draft :refer [create-draft-page]])
     (:import goog.History))
 
 ;; -------------------------
 ;; Views
-
-(defn home-page []
-  [:div [:h2 "Welcome to draftboard"]
-   [:div [:a {:href "#/about"} "go to about page"]]])
 
 (defn about-page []
   [:div [:h2 "About draftboard"]
    [:div [:a {:href "#/"} "go to the home page"]]])
 
 (defn current-page []
-  [:div [(session/get :current-page)]])
+  [:div (let [page (session/get :current-page)] 
+        (if (seq? page)
+            page
+            (vector page)))])
 
 ;; -------------------------
 ;; Routes
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (session/put! :current-page #'home-page))
+  (session/put! :current-page #'welcome-page))
+
+(secretary/defroute "/create" []
+  (session/put! :current-page #'create-draft-page))
+
+(secretary/defroute "/board/:id" [id]
+  (session/put! :current-page [#'draftboard-page id]))
 
 (secretary/defroute "/about" []
   (session/put! :current-page #'about-page))
@@ -45,7 +53,7 @@
 ;; -------------------------
 ;; Initialize app
 (defn mount-root []
-  (reagent/render [current-page] (.getElementById js/document "app")))
+  (reagent/render [current-page] (.getElementById js/document "draftboard")))
 
 (defn init! []
   (hook-browser-navigation!)
