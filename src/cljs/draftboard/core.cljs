@@ -19,10 +19,9 @@
 
 (defn current-page []
   [:div (let [page (session/get :current-page)] 
-        (if (seq? page)
+        (if (coll? page)
             page
             (vector page)))])
-
 ;; -------------------------
 ;; Routes
 (secretary/set-config! :prefix "#")
